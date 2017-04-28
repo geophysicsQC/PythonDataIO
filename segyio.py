@@ -7,8 +7,8 @@ class SEGYReader:
     """Read SEG-Y file
 
     args:
-    has_init - True or False. Will set to False updating file_path or setting_path
-    settings - a dictionary of settings
+    has_init = True or False. Will set to False updating file_path or setting_path
+    setting_path = path to the settings file
     """
     def __init__(self, file_path='', setting_path=''):
         self._file_path = file_path
@@ -27,13 +27,21 @@ class SEGYReader:
         return self._setting_path
 
     def set_file_path(self, path):
-        """Set file path
+        """Set file path.
+
+        Will automatically set had_init to False.
+
+        args:
+        path = path to the SEG-Y file
         """
         self._file_path = path
         self.has_init = False
 
     def init_setting(self, path=''):
         """Initialize settings, if path is empty string, use default
+
+        args:
+        path = file path to the settings file.
         """
         self._setting_path = path
         # set init flag to False to force initialization in the reading process
