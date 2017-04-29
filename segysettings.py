@@ -5,7 +5,8 @@ import json
 
 def default_segy_settings(path=''):
     """Return the default SEG-Y settings dictionary. If path is not empty, write out the
-    settings file in json format.
+    settings file in json format. For all header instructions, the list is
+    [type, byte relative to binary header start byte/trace header start byte]
     """
     data = {}
     data['binary_header'] = {}
