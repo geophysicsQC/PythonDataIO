@@ -1,1 +1,85 @@
-{"binary_header": {"sample_per_trace": ["short", 20], "sample_format_code": ["short", 24], "extra_text_header_number": ["short", 304], "job_id": ["int", 0], "line_no": ["int", 4], "reel_no": ["int", 8], "trace_per_ensemble": ["short", 12], "auxtrace_per_ensemble": ["short", 14], "sample_interval_us": ["short", 16], "ori_sample_interval_us": ["short", 18], "ori_sample_per_trace": ["short", 22], "ensemble_fold": ["short", 26], "sorting_code": ["short", 28]}, "trace_header": {"trace_seq_no_within_line": ["int", 0], "trace_seq_no_within_file": ["int", 4], "ori_fld_rcd_no": ["int", 8], "trace_no_within_ori_fld_rcd": ["int", 12]}, "text_header_byte": 3200, "binary_header_byte": 400, "trace_header_byte": 240, "text_header_encoding_detection": "auto", "text_header_number_detection": "auto", "endian_detection": "auto", "sample_format_detection": "auto", "endian": "little", "text_header_encoding": "ascii", "text_header_number": 1, "sample_format": "ibm"}
+{
+  "binary_header": {
+    "sample_per_trace": [
+      "short",
+      20
+    ],
+    "sample_format_code": [
+      "short",
+      24
+    ],
+    "extra_text_header_number": [
+      "short",
+      304
+    ],
+    "job_id": [
+      "int",
+      0
+    ],
+    "line_no": [
+      "int",
+      4
+    ],
+    "reel_no": [
+      "int",
+      8
+    ],
+    "trace_per_ensemble": [
+      "short",
+      12
+    ],
+    "auxtrace_per_ensemble": [
+      "short",
+      14
+    ],
+    "sample_interval_us": [
+      "short",
+      16
+    ],
+    "ori_sample_interval_us": [
+      "short",
+      18
+    ],
+    "ori_sample_per_trace": [
+      "short",
+      22
+    ],
+    "ensemble_fold": [
+      "short",
+      26
+    ],
+    "sorting_code": [
+      "short",
+      28
+    ]
+  },
+  "trace_header": {
+    "trace_seq_no_within_line": [
+      "int",
+      0
+    ],
+    "trace_seq_no_within_file": [
+      "int",
+      4
+    ],
+    "ori_fld_rcd_no": [
+      "int",
+      8
+    ],
+    "trace_no_within_ori_fld_rcd": [
+      "int",
+      12
+    ]
+  },
+  "text_header_byte": 3200,
+  "binary_header_byte": 400,
+  "trace_header_byte": 240,
+  "text_header_encoding_detection": "auto",
+  "text_header_number_detection": "auto",
+  "endian_detection": "auto",
+  "sample_format_detection": "auto",
+  "endian": "little",
+  "text_header_encoding": "ascii",
+  "text_header_number": 1,
+  "sample_format": "ibm"
+}
