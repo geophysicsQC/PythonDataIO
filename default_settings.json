@@ -74,12 +74,14 @@
   "text_header_byte": 3200,
   "binary_header_byte": 400,
   "trace_header_byte": 240,
-  "text_header_encoding_detection": "auto",
-  "text_header_number_detection": "auto",
-  "endian_detection": "auto",
-  "sample_format_detection": "auto",
+  "text_header_encoding_detection": true,
+  "text_header_number_detection": true,
+  "endian_detection": true,
+  "sample_format_detection": true,
+  "sample_per_trace_detection": true,
   "endian": "little",
+  "sample_format": "ibm",
   "text_header_encoding": "ascii",
   "text_header_number": 1,
-  "sample_format": "ibm"
+  "sample_per_trace": 0
 }

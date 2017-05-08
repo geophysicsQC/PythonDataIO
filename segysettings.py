@@ -40,27 +40,34 @@ def default_segy_settings(path=''):
     data['binary_header_byte'] = 400
     data['trace_header_byte'] = 240
 
-    # detection methods options ['auto'|'manual']
-    data['text_header_encoding_detection'] = 'auto'
+    # Parameter detection flags (booleans) +++++++++++++++++++++++++++++++++++++++++++++++
+    # depends on the first character of the text header
+    data['text_header_encoding_detection'] = True
     # depends on data['binary_header']['extra_text_header_number']
-    data['text_header_number_detection'] = 'auto'
-    data['endian_detection'] = 'auto'
-    data['sample_format_detection'] = 'auto'
+    data['text_header_number_detection'] = True
+    # depends on data['binary_header']['sample_format_code']
+    data['endian_detection'] = True
+    # depends on data['binary_header']['sample_format_code']
+    data['sample_format_detection'] = True
+    # depends on data['binary_header']['sample_pre_trace']
+    data['sample_per_trace_detection'] = True
 
-    # if data['endian_detection'] == 'auto', use the following setting for endianess
+    # Mandatory parameters +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     data['endian'] = 'little'
 
-    # text header encoding options ['ascii'|'ebcdic'],
-    # used when data['text_header_encoding_detection'] = 'manual'
-    data['text_header_encoding'] = 'ascii'
-
-    # if data['text_header_number_detection'] == 'manual', use the following field
-    data['text_header_number'] = 1
-
-    # sample format used if data['sample_format_detection'] == 'auto'
     # the possible sample formats are ['ibm'|'int4'|'int2'|'ieee_float'|'int1']
     data['sample_format'] = 'ibm'
 
+    # text header encoding options ['ascii'|'ebcdic']
+    data['text_header_encoding'] = 'ascii'
+
+    # number of text headers
+    data['text_header_number'] = 1
+
+    # number of samples per trace
+    data['sample_per_trace'] = 0
+
+    # if path provided, write the default settings out +++++++++++++++++++++++++++++++++++
     if path != '':
         with open(path, 'w') as json_file:
             json.dump(data, json_file, indent=2)

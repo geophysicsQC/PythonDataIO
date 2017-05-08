@@ -1,9 +1,8 @@
 """SEGY IO module
 """
 import json
-import segysettings
 import struct
-
+import segysettings
 
 class SEGYReader:
     """Read SEG-Y file
@@ -12,13 +11,11 @@ class SEGYReader:
     has_init = True or False. Will set to False updating file_path or setting_path
     setting_path = path to the settings file
     """
-
     def __init__(self, file_path='', setting_path=''):
         self._file_path = file_path
         self._setting_path = setting_path
         self.has_init = False
         self.settings = {}
-        self._is_little_endian = None
 
     def file_path(self):
         """Get file path
@@ -66,7 +63,7 @@ class SEGYReader:
         with open(self.file_path, 'rb') as segy_file:
             # check file endianess
             self._check_file_endianess(segy_file, self.settings)
-            # validate required parameter
+            # read required parameter
             self._read_mandatory_parameters(segy_file, self.settings)
             # detect text header number
             self._check_text_header(segy_file, self.settings)
@@ -76,7 +73,40 @@ class SEGYReader:
     def _read_mandatory_parameters(self, segy_file, settings):
         """Read mandatory parameters.
         """
-        pass
+        if settings['endian'] == 'little':
+            is_little_endian = True
+        elif settings['endian'] == 'big':
+            is_little_endian = False
+        else:
+            raise InvalidSettingValue()
+
+        # read samples per trace
+        format_type, relative_byte = settings['binary_header']['sample_per_trace']
+        settings['sample_per_trace'] = _read_header(segy_file, format_type,
+                                                    relative_byte +
+                                                    settings['text_header_byte'],
+                                                    is_little_endian)
+        # read sample format
+        format_type, relative_byte = settings['binary_header']['sample_format_code']
+        sample_format_code = _read_header(segy_file, format_type,
+                                          relative_byte +
+                                          settings['text_header_byte'],
+                                          is_little_endian)
+
+        # update sample_format
+        if sample_format_code == 1:
+            settings['sample_format'] = 'ibm'
+        elif sample_format_code == 2:
+            settings['sample_format'] = 'int4'
+        elif sample_format_code == 3:
+            settings['sample_format'] = 'int2'
+        elif sample_format_code == 5:
+            settings['sample_format'] = 'ieee_float'
+        elif sample_format_code == 8:
+            settings['sample_format'] = 'int1'
+        else:
+            raise SampleFormatDetectionError()
+
 
     def _check_file_endianess(self, segy_file, settings):
         """Check file endianess.
@@ -84,17 +114,11 @@ class SEGYReader:
         If user wants to test file endianess, we will use sample_format_code binary header
         to identify it.
         """
-        try:
-            if settings['endian_detection'] != 'auto':
-                if settings['endian'] == 'little':
-                    self._is_little_endian = True
-                elif settings['endian'] == 'big':
-                    self._is_little_endian = False
-                else:
-                    raise EndianMissingError()
+        if settings['endian_detection']:
+            if settings['endian'] != "little" and settings['endian'] != "big":
+                raise EndianMissingError()
+            else:
                 return
-        except KeyError:
-            raise EndianMissingError()
 
         format_type, relative_byte = settings['binary_header']['sample_format_code']
         sample_format_code = _read_header(segy_file, format_type,
@@ -108,15 +132,21 @@ class SEGYReader:
                                               relative_byte +
                                               settings['text_header_byte'],
                                               False)
-            if sample_format_code < 1 or sample_format_code > 8:
+            if (sample_format_code != 1 and
+                    sample_format_code != 2 and
+                    sample_format_code != 3 and
+                    sample_format_code != 4 and
+                    sample_format_code != 5 and
+                    sample_format_code != 8):
                 # if using big endian, we still cannot get the right sample
                 # format code
-                raise AutoEndianDetectionError()
+                raise EndianDetectionError()
             else:
                 # detect
-                self._is_little_endian = False
+                settings['endian'] = 'big'
+                return
         # detect
-        self._is_little_endian = True
+        settings['endian'] = 'little'
 
     def _check_text_header(self, segy_file, settings):
         """Check text header number.
@@ -148,8 +178,8 @@ class WrongFormatStringError(Exception):
     pass
 
 
-class AutoEndianDetectionError(Exception):
-    """Error shot when we cannot automatically detect file endianess
+class EndianDetectionError(Exception):
+    """Error shot when we cannot detect file endianess
     """
     pass
 
@@ -157,6 +187,16 @@ class AutoEndianDetectionError(Exception):
 class EndianMissingError(Exception):
     """Error shot when there is no 'endian' field in the settings, or the 'endian' field
     is not either 'little' or 'big'
+    """
+    pass
+
+class SampleFormatDetectionError(Exception):
+    """Error when sample format cannot be determined by the sample format code.
+    """
+    pass
+
+class InvalidSettingValue(Exception):
+    """Error when the settings value is not valid.
     """
     pass
 
