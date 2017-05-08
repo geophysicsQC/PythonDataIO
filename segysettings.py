@@ -63,6 +63,6 @@ def default_segy_settings(path=''):
 
     if path != '':
         with open(path, 'w') as json_file:
-            json.dump(data, json_file)
+            json.dump(data, json_file, indent=2)
 
     return data
