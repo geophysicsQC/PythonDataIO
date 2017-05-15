@@ -3,6 +3,7 @@
 import json
 import struct
 import segysettings
+import codecs
 
 class SEGYReader:
     """Read SEG-Y file
@@ -93,6 +94,11 @@ class WrongFormatStringError(Exception):
 
 class EndianDetectionError(Exception):
     """Error shot when we cannot detect file endianess
+    """
+    pass
+
+class EncodingDetectionError(Exception):
+    """Error shot when encoding detection fails
     """
     pass
 
@@ -278,6 +284,33 @@ def _read_header(segy_file, format_type, byte, is_little_endian):
 
     char_string = segy_file.read(size_read)
     return struct.unpack(format_code, char_string)[0]
+
+def _check_encoding(segy_file, settings):
+    """Check the file encoding by checking the first letter read.
+
+    Expect a capitalized C letter for the first letter of the text header. If not found,
+    will raise EncodingDetectionError.
+    """
+    if settings['text_header_encoding_detection']:
+        if settings['text_header_encoding'] != "ascii" and settings['text_header_encoding'] != "ebcdic":
+            raise InvalidSettingValue()
+
+    # read first byte
+    segy_file.seek(0)
+    C_letter_byte = segy_file.read(1)
+
+    # try ebcdic first
+    C_letter = codecs.decode(C_letter_byte, encoding='cp037')
+    if C_letter == 'C':
+        settings['text_header_encoding'] = 'ebcdic'
+        return
+    # try ascii then
+    C_letter = codecs.decode(C_letter_byte, encoding='ascii')
+    if C_letter == 'C':
+        settings['text_header_encoding'] = 'ebcdic'
+        return
+    raise EncodingDetectionError()
+
 
 def _count_extra_text_headers(segy_file, stop_stanza, binary_header_bytes, text_header_size):
     """Count the number of extra text headers in the segy file

@@ -36,5 +36,22 @@ class TestSEGYRead(unittest.TestCase):
         self.assertEqual(settings["sample_format"], "ibm")
         self.assertEqual(settings["sample_per_trace"], 1500)
 
+    def test_encoding_check(self):
+        """Test the checking of the file encoding
+        """
+        file_path = r"./test_data/cdplbls_2373_angstk0_to_15.sgy"
+        reader = segyio.SEGYReader(file_path)
+
+        # initialize using the default settings
+        reader.init_setting()
+
+        # open file
+        file = open(file_path, 'rb')
+
+        # checking encoding
+        segyio._check_encoding(file, reader.settings)
+
+        self.assertEqual(reader.settings['text_header_encoding'], 'ebcdic')
+
 if __name__ == '__main__':
     unittest.main()
