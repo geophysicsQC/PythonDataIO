@@ -82,6 +82,6 @@
   "endian": "little",
   "sample_format": "ibm",
   "text_header_encoding": "ascii",
-  "text_header_number": 1,
+  "extra_text_header_number": 0,
   "sample_per_trace": 0
 }

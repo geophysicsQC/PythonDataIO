@@ -15,6 +15,13 @@ def default_segy_settings(path=''):
     # specification of binary header fields that are mandatory
     data['binary_header']['sample_per_trace'] = ['short', 20]
     data['binary_header']['sample_format_code'] = ['short', 24]
+    # Number of 3200-byte, extended textual file header records following the Binary Header
+    # Value meaning
+    # 0 = there are no extended textual file header records
+    # -1 = there are a variable number of extended textual file header records and the end
+    #      of the extended textual file header is denoted by a (SEG: EndText) stanza in the
+    #      final record
+    # positive number = exactly that many extended textual file header records
     data['binary_header']['extra_text_header_number'] = ['short', 304]
 
     # specification of other binary header fields
@@ -62,7 +69,7 @@ def default_segy_settings(path=''):
     data['text_header_encoding'] = 'ascii'
 
     # number of text headers
-    data['text_header_number'] = 1
+    data['extra_text_header_number'] = 0
 
     # number of samples per trace
     data['sample_per_trace'] = 0
